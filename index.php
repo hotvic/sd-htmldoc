@@ -96,6 +96,12 @@ function list_sorted($sort){
     }
     asort($tutos);
 
+    $tutorial = false;
+    $folder   = false;
+    $date     = false;
+    $mtime    = false;
+    $author   = false;
+
     foreach ($tutos as $key => $val){
         switch ($sort){
             case "tutos":
@@ -112,7 +118,7 @@ function list_sorted($sort){
                 $mtime    = $val["mtime"];
                 $author   = $val["author"];
                 break;
-            case "author":
+            case "autor":
                 $tutorial = $val["tutorial"];
                 $folder   = $val["folder"];
                 $date     = $val["date"];
