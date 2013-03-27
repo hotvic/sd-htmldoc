@@ -3,7 +3,7 @@
 date_default_timezone_set("UTC");
 
 // Files and folders in this array will don't be listed
-$excludes = [".", "..", "index.php", "index.php.head", "index.php.foot"];
+$excludes = array(".", "..", ".htaccess", "index.php", "index.php.head", "index.php.foot");
 
 function show_head(){
     if ( file_exists("index.php.head") ){
