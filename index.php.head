@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Tutorias em HTML - Só Dicas</title>
+</head>
+<body>
+    <center><h1>Tutorias em HTML</h1></center>
+    <hr>
+    <table border="1">
+        <tr>
+            <th><b><a href="index.php?sort=tutos">Tutorial</a></b></th>
+            <th><b><a href="index.php?sort=files">Arquivos Fontes</a></b></th>
+            <th><b><a href="index.php">Data</a></b></th>
+            <th><b><a href="index.php?sort=autor">Autor</a></b></th>
+        </tr>
