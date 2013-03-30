@@ -25,9 +25,13 @@ class UserDB {
         $user = FALSE;
 
         while ( ! feof($this->file) ){
+            $aignore = array("^#", "^$", "^ *$");
             $line = fgets($this->file);
 
-            if ( $line[0] == "#" || $line[0] == "\n" ) continue;
+            foreach ($aignore as $value){
+                if ( preg_match("@$value@", $line) )
+                    continue 2;
+            }
 
             $u = explode(":", $line);
 
