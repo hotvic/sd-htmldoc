@@ -45,12 +45,12 @@ function list_all(){
                 $date = date("F d Y H:i", filemtime("$entry/$entry.html"));
                 $mtime = filemtime("$entry/$entry.html");
 
-                echo "      <tr>\n";
-                echo "          <td><a href=\"$entry/$entry.html\">$tutorial[0]</a></td>\n";
-                echo "          <td><a href=\"$entry\">$entry</a></td>\n";
-                echo "          <td><a href=\"index.php?date=$mtime\">$date</a></td>\n";
-                echo "          <td><a href=\"index.php?author=$tutorial[1]\">$tutorial[1]</a></td>\n";
-                echo "      </tr>\n";
+                echo "        <tr>\n";
+                echo "            <td><a href=\"$entry/$entry.html\">$tutorial[0]</a></td>\n";
+                echo "            <td><a href=\"$entry\">$entry</a></td>\n";
+                echo "            <td><a href=\"index.php?date=$mtime\">$date</a></td>\n";
+                echo "            <td><a href=\"index.php?author=$tutorial[1]\">$tutorial[1]</a></td>\n";
+                echo "        </tr>\n";
             }
         }
     closedir($handle);
@@ -126,12 +126,12 @@ function list_sorted($sort){
                 $author   = $key;
                 break;
         }
-        echo "      <tr>\n";
-        echo "          <td><a href=\"$folder/$folder.html\">$tutorial</a></td>\n";
-        echo "          <td><a href=\"$folder\">$folder</a></td>\n";
-        echo "          <td><a href=\"index.php?date=$$mtime\">$date</a></td>\n";
-        echo "          <td><a href=\"index.php?author=$author\">$author</a></td>\n";
-        echo "      </tr>\n";
+        echo "        <tr>\n";
+        echo "            <td><a href=\"$folder/$folder.html\">$tutorial</a></td>\n";
+        echo "            <td><a href=\"$folder\">$folder</a></td>\n";
+        echo "            <td><a href=\"index.php?date=$$mtime\">$date</a></td>\n";
+        echo "            <td><a href=\"index.php?author=$author\">$author</a></td>\n";
+        echo "        </tr>\n";
     }
 }
 
