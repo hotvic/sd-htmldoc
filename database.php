@@ -1,7 +1,7 @@
 <?php
 class UserDB {
-    protected $file = FALSE;
-    protected $open = FALSE;
+    private $file = FALSE;
+    private $open = FALSE;
 
     function opendb($dbfilename){
         $this->file = fopen($dbfilename, "c+");

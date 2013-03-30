@@ -2,9 +2,9 @@
 # will be ignored.
 #-----------------
 # Database format
-# id:nickname:realname:number_of_approved_tutorials
+# id:nickname:password:realname:number_of_approved_tutorials
 # Where:
-#       id: 0-100 = Administrators (for admins the third value is password)
+#       id: 0-100 = Administrators
 #           101-  = Normal users (Tutorial Authors)
 ###########################################################
 
