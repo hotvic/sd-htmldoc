@@ -56,11 +56,7 @@ class Database {
         $error = false;
         $insert = "INSERT INTO authors(username, email, realname, password, salt) VALUES(?, ?, ?, ?, ?)";
 
-        if (! isset($u['username']) ) $error = true;
-        if (! isset($u['email'])    ) $error = true;
-        if (! isset($u['realname']) ) $error = true;
-        if (! isset($u['password']) ) $error = true;
-        if (! isset($u['salt'] )    ) $error = true;
+        if (! isset($u['username'], $u["email"], $u["realname"], $u["password"], $u["salt"]) ) $error = true;
 
         if ( $error ) return false;
 
@@ -73,6 +69,29 @@ class Database {
             return false;
         }
         return true;
+    }
+    /*
+     * Query for user's info
+     * return it in an assosiative array, or false for error
+     */
+    function query_user($user, $pass) {
+        $check = $this->login_check($user, $pass);
+        if (! $check["user"] &&! $check["user"] ) return false;
+
+        $query = "SELECT id, username, email, realname FROM authors WHERE username = ?";
+
+        if ( $stmt = $this->mysqli->prepare($query) ) {
+            $stmt->bind_param('s', $user);
+            $stmt->execute();
+            $stmt->bind_result($id, $username, $email, $realname);
+
+            if ( $stmt->fetch() ) {
+                $arr = array('id' => $id, 'username' => $username,
+                            'email' => $email, 'realname' => $realname);
+                return $arr;
+            }
+        }
+        return false;
     }
 }
 ?>

@@ -115,7 +115,7 @@
                 errmsg += "Por favor, selecione um arquivo!\n<br>";
                 errflag = true;
             }
-            if ( frm.elements["user"] != "" && frm.elements["pwd"] != "" && ! errflag ){
+            if ( frm.elements["user"].value != "" && frm.elements["pwd"].value != "" && ! errflag ){
                 if ( window.cuser && window.cpass == false ) {
                     errmsg += "Você informou um usuário existente, portanto deve informar a senha cadastrada!\n<br>";
                     errflag = true;
@@ -129,32 +129,37 @@
 
                 return false;
             }
+            frm.elements["pwd"].value = hex_sha512(frm.elements["pwd"].value);
             return true;
         }
     </script>
 </head>
 <body>
-    <form name="sendtuto" action="upload.php" method="POST" enctype="multipart/form-data" onsubmit="return checkform();">
+    <form name="sendtuto" action="upload.php?action=upload" enctype="multipart/form-data" method="POST" onsubmit="return checkform();">
     <fieldset>
         <legend>Enviar Tutorial</legend>
         <table><tbody>
         <tr>
-            <th><label>Nome do Tutorial:</label></th>
+            <th><span style="color: #FF0000;"> * </span><label>Nome do Tutorial:</label></th>
             <td><input type="text" name="tuto"></td>
         </tr>
         <tr>
-            <th><label title="Nome de usuário, caso não exista será criado.">Usuário:</label></th>
+            <th><span style="color: #FF0000;"> * </span><label title="Nome de usuário, caso não exista será criado.">Usuário:</label></th>
             <td><input type="text" name="user" onkeyup="checkUser(this.value)"></td>
             <td id="uhint"></td>
         </tr>
         <tr>
-            <th><label title="Em caso de usuário existente a senha deve coincidir com a cadastrada.">Senha:</label></th>
-            <td><input type="password" name="pwd" onkeyup="checkPass(this.form.user.value, this.value)"></td>
+            <th><span style="color: #FF0000;"> * </span><label title="Em caso de usuário existente a senha deve coincidir com a cadastrada.">Senha:</label></th>
+            <td><input type="password" name="pwd" onchange="checkPass(this.form.user.value, this.value)"></td>
             <td id="phint"></td>
         </tr>
         <tr>
-            <th><label>Arquivo:</label></th>
+            <th><span style="color: #FF0000;"> * </span><label>Arquivo:</label></th>
             <td><input type="file" name="file"></td>
+        </tr>
+        <tr>
+            <th><label title="Detalhes Adicionais, exemplo: Copyright">Detalhes Adicionais:</label></th>
+            <td><textarea name="details" cols="36" rows="5"></textarea></td>
         </tr>
         <tr>
             <td></td>
