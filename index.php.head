@@ -15,6 +15,7 @@
         th {
             height: 30px;
             background-color: rgb(167, 201, 66);
+            border: 0px;
         }
         td {
             background-color: #EAF2D3;
@@ -44,7 +45,7 @@
     <hr>
     <center>
     <table border="1">
-        <tr>
+        <tr class="header">
             <th><b><a href="index.php?sort=tutos">Tutorial</a></b></th>
             <th><b><a href="index.php?sort=files">Arquivos Fontes</a></b></th>
             <th><b><a href="index.php">Data</a></b></th>

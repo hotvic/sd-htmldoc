@@ -17,6 +17,7 @@ class Database {
         if (! $this->mysqli ) return false;
     }
 
+    // --authors--
     /*
      * Check if login's correct.
      * pass = false: it'll check only if user is correct.
@@ -90,8 +91,79 @@ class Database {
                             'email' => $email, 'realname' => $realname);
                 return $arr;
             }
+            $stmt->close();
         }
         return false;
+    }
+    // --tutorials--
+    /*
+     * Add a tutorial for database
+     * $tuto is an array of tutorial details
+     */
+    function add_tuto($tuto) {
+        if (! isset($tuto["uid"], $tuto["folder"], $tuto["title"]) ) return false;
+
+        $insert = "INSERT INTO tutorials(uid, folder, title) VALUES(?, ?, ?)";
+
+        if ( $stmt = $this->mysqli->prepare($insert) ) {
+            $stmt->bind_param('iss', $tuto["uid"], $tuto["folder"], $tuto["title"]);
+            $stmt->execute();
+
+            if ( $stmt->affected_rows() ) {
+                $stmt->close();
+            } else {
+                $stmt->close();
+            }
+            $stmt->close();
+        }
+        return false;
+    }
+    /*
+     * Return an assosiative array of tutorial filtered by "$by"
+     * $by:
+     *  possible values are: "id", "uid", "folder", "title"
+     */
+    function query_tuto($by, $where) {
+        if (! in_array($by, array("id", "uid", "folder", "title")) ) return false;
+
+        $query = "SELECT * FROM tutorials WHERE $by = ?";
+        $type  = is_int($by) ? 'i' : 's';
+        
+        if ( $stmt = $this->mysqli->prepare($query) ) {
+            $stmt->bind_param($type, $where);
+            $stmt->execute();
+            $stmt->bind_result($id, $uid, $folder, $title);
+
+            if ( $stmt->fetch() ){
+                $arr = array('id' => $id, 'uid' => $uid,
+                            'folder' => $folder, 'title' => $title);
+                return $arr;
+            } else {
+                return false;
+            }
+            $stmt->close();
+        }
+    }
+    function get_all($limit = false) {
+        $return = array();
+        if ( $limit && is_int($limit) )
+            $query = "SELECT * FROM tutorials LIMIT $limit";
+        else
+            $query = "SELECT * FROM tutorials";
+
+        if ( $stmt = $this->mysqli->prepare($query) ) {
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            while ( $tmp = $result->fetch_assoc() ) {
+                $return[] = $tmp;
+            }
+            $stmt->close();
+
+            return $return;
+        } else {
+            return false;
+        }
     }
 }
 ?>
