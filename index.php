@@ -1,139 +1,205 @@
 <?php
-// Set timezone, because some servers aren't configured this on php
-date_default_timezone_set("UTC");
 
-// Includes
-include("database.php");
+/*
+ *---------------------------------------------------------------
+ * APPLICATION ENVIRONMENT
+ *---------------------------------------------------------------
+ *
+ * You can load different configurations depending on your
+ * current environment. Setting the environment also influences
+ * things like logging and error reporting.
+ *
+ * This can be set to anything, but default usage is:
+ *
+ *     development
+ *     testing
+ *     production
+ *
+ * NOTE: If you change these, also change the error_reporting() code below
+ *
+ */
+	define('ENVIRONMENT', 'development');
+/*
+ *---------------------------------------------------------------
+ * ERROR REPORTING
+ *---------------------------------------------------------------
+ *
+ * Different environments will require different levels of error reporting.
+ * By default development will show errors but testing and live will hide them.
+ */
 
-// Files and folders in this array will don't be listed
-$excludes = array(".", "..", "js", "imgs");
+if (defined('ENVIRONMENT'))
+{
+	switch (ENVIRONMENT)
+	{
+		case 'development':
+			error_reporting(E_ALL);
+		break;
+	
+		case 'testing':
+		case 'production':
+			error_reporting(0);
+		break;
 
-function show_head() {
-    if ( file_exists("index.php.head") ){
-        $head = file_get_contents("index.php.head");
-
-        echo $head;
-    }
+		default:
+			exit('The application environment is not set correctly.');
+	}
 }
 
-function show_foot() {
-    if ( file_exists("index.php.foot") ){
-        $foot = file_get_contents("index.php.foot");
+/*
+ *---------------------------------------------------------------
+ * SYSTEM FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * This variable must contain the name of your "system" folder.
+ * Include the path if the folder is not in the same  directory
+ * as this file.
+ *
+ */
+	$system_path = 'lib';
 
-        echo $foot;
-    }
-}
+/*
+ *---------------------------------------------------------------
+ * APPLICATION FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * If you want this front controller to use a different "application"
+ * folder then the default one you can set its name here. The folder
+ * can also be renamed or relocated anywhere on your server.  If
+ * you do, use a full server path. For more info please see the user guide:
+ * http://codeigniter.com/user_guide/general/managing_apps.html
+ *
+ * NO TRAILING SLASH!
+ *
+ */
+	$application_folder = 'sd-htmldoc';
 
-function get_array_for($entry) {
-    if ( file_exists($entry . "/author" ))
-        $afile = file_get_contents($entry . "/author");
+/*
+ * --------------------------------------------------------------------
+ * DEFAULT CONTROLLER
+ * --------------------------------------------------------------------
+ *
+ * Normally you will set your default controller in the routes.php file.
+ * You can, however, force a custom routing by hard-coding a
+ * specific controller class/function here.  For most applications, you
+ * WILL NOT set your routing here, but it's an option for those
+ * special instances where you might want to override the standard
+ * routing in a specific front controller that shares a common CI installation.
+ *
+ * IMPORTANT:  If you set the routing here, NO OTHER controller will be
+ * callable. In essence, this preference limits your application to ONE
+ * specific controller.  Leave the function name blank if you need
+ * to call functions dynamically via the URI.
+ *
+ * Un-comment the $routing array below to use this feature
+ *
+ */
+	// The directory name, relative to the "controllers" folder.  Leave blank
+	// if your controller is not in a sub-folder within the "controllers" folder
+	// $routing['directory'] = '';
 
-    if ( isset($afile) ){
-        $arr  = explode(":", explode("\n", $afile)[0]);
-        return array('tutorial' => $arr[0], 'author' => $arr[1]);
-    }
+	// The controller class file name.  Example:  Mycontroller
+	// $routing['controller'] = '';
 
-    return false;
-}
+	// The controller function you wish to be called.
+	// $routing['function']	= '';
 
-function echo_entry($entry) {
-    if (! isset($entry["author"], $entry["folder"], $entry["tutorial"],
-                $entry["mtime"], $entry["date"]) ) return false;
 
-    echo "        <tr>\n";
-    echo "            <td><a href=\"${entry["folder"]}/${entry["folder"]}.html\">${entry["tutorial"]}</a></td>\n";
-    echo "            <td><a href=\"${entry["folder"]}\">${entry["folder"]}</a></td>\n";
-    echo "            <td><a href=\"index.php?date=${entry["mtime"]}\">${entry["date"]}</a></td>\n";
-    echo "            <td><a href=\"index.php?author=${entry["author"]}\">${entry["author"]}</a></td>\n";
-    echo "        </tr>\n";
-}
+/*
+ * -------------------------------------------------------------------
+ *  CUSTOM CONFIG VALUES
+ * -------------------------------------------------------------------
+ *
+ * The $assign_to_config array below will be passed dynamically to the
+ * config class when initialized. This allows you to set custom config
+ * items or override any default config values found in the config.php file.
+ * This can be handy as it permits you to share one application between
+ * multiple front controller files, with each file containing different
+ * config values.
+ *
+ * Un-comment the $assign_to_config array below to use this feature
+ *
+ */
+	// $assign_to_config['name_of_config_item'] = 'value of config item';
 
-function list_all() {
-    global $excludes;
-    $db = new Database();
 
-    if ( $handle = opendir(".") ){
-        while ( false !== ($entry = readdir($handle)) ){
-            if ( ! in_array($entry, $excludes) && is_dir($entry) ){
-                $dbtuto   = $db->query_tuto("folder", $entry);
-                $tutorial = $dbtuto ? $dbtuto : get_array_for($entry);
-                $mtime    = filemtime("$entry/$entry.html");
-                $date     = date("F d Y H:i", $mtime);
 
-                $arr = array('author' => $tutorial['author'], 'tutorial' => $tutorial['tutorial'],
-                            'folder' => $entry, 'mtime' => $mtime, 'date' => $date);
-                echo_entry($arr);
-            }
-        }
-    closedir($handle);
-    }
-}
+// --------------------------------------------------------------------
+// END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
+// --------------------------------------------------------------------
 
-function list_sorted($sort) {
-    global $excludes;
-    $db    = new Database();
-    $tutos = array();
+/*
+ * ---------------------------------------------------------------
+ *  Resolve the system path for increased reliability
+ * ---------------------------------------------------------------
+ */
 
-    if ( $handle = opendir(".") ){
-        while ( false !== ($entry = readdir($handle)) ){
-            if (! in_array($entry, $excludes) && is_dir($entry) ){
-                $dbtuto   = $db->query_tuto("folder", $entry);
-                $tutorial = $dbtuto ? $dbtuto : get_array_for($entry);
-                $date     = date("F d Y H:i", filemtime("$entry/$entry.html"));
-                $mtime    = filemtime("$entry/$entry.html");
+	// Set the current directory correctly for CLI requests
+	if (defined('STDIN'))
+	{
+		chdir(dirname(__FILE__));
+	}
 
-                switch ($sort){
-                    case "tutos":
-                        $tutos += array($tutorial['tutorial'] =>
-                                    array("tutorial" => $tutorial["tutorial"],
-                                        "folder" => $entry,
-                                        "date" => $date,
-                                        "mtime" => $mtime,
-                                        "author" => $tutorial['author']));
-                        break;
-                    case "files":
-                        $tutos += array($entry =>
-                                    array("folder" => $entry,
-                                        "tutorial" => $tutorial['tutorial'],
-                                        "date" => $date,
-                                        "mtime" => $mtime,
-                                        "author" => $tutorial['author']));
-                        break;
-                    case "autor":
-                        $tutos += array("${tutorial['author']} $entry" =>
-                                    array("tutorial" => $tutorial['tutorial'],
-                                        "folder" => $entry,
-                                        "date" => $date,
-                                        "mtime" => $mtime,
-                                        "author" => $tutorial["author"]));
-                        break;
-                }
-            }
-        }
-    }
-    ksort($tutos, SORT_NATURAL | SORT_FLAG_CASE);
+	if (realpath($system_path) !== FALSE)
+	{
+		$system_path = realpath($system_path).'/';
+	}
 
-    foreach ($tutos as $key => $val) {
-        echo_entry($val);
-    }
-}
-// TODO:
-//  Write this function...
-function list_by_author($athor) {
+	// ensure there's a trailing slash
+	$system_path = rtrim($system_path, '/').'/';
 
-}
+	// Is the system path correct?
+	if ( ! is_dir($system_path))
+	{
+		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+	}
 
-if ( ! isset($_GET["sort"]) && ! isset($_GET["author"]) ) {
-    show_head();
-    list_all();
-    show_foot();
-} elseif ( isset($_GET["sort"]) ) {
-    $sort = $_GET["sort"];
+/*
+ * -------------------------------------------------------------------
+ *  Now that we know the path, set the main path constants
+ * -------------------------------------------------------------------
+ */
+	// The name of THIS file
+	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 
-    show_head();
-    list_sorted($sort);
-    show_foot();
-} elseif ( isset($_GET["author"]) ) {
-    echo "Database functions are not implemented yet!\n";
-    echo "<br>\nSorry for this inconvience.";
-}
+	// The PHP file extension
+	// this global constant is deprecated.
+	define('EXT', '.php');
+
+	// Path to the system folder
+	define('BASEPATH', str_replace("\\", "/", $system_path));
+
+	// Path to the front controller (this file)
+	define('FCPATH', str_replace(SELF, '', __FILE__));
+
+	// Name of the "system folder"
+	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+
+
+	// The path to the "application" folder
+	if (is_dir($application_folder))
+	{
+		define('APPPATH', $application_folder.'/');
+	}
+	else
+	{
+		if ( ! is_dir(BASEPATH.$application_folder.'/'))
+		{
+			exit("Your application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
+		}
+
+		define('APPPATH', BASEPATH.$application_folder.'/');
+	}
+
+/*
+ * --------------------------------------------------------------------
+ * LOAD THE BOOTSTRAP FILE
+ * --------------------------------------------------------------------
+ *
+ * And away we go...
+ *
+ */
+require_once BASEPATH.'core/CodeIgniter.php';
+
+/* End of file index.php */
+/* Location: ./index.php */
